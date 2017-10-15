@@ -1,0 +1,159 @@
+#:import Toolbar kivymd.toolbar.Toolbar
+#:import ThemeManager kivymd.theming.ThemeManager
+#:import MDNavigationDrawer kivymd.navigationdrawer.MDNavigationDrawer
+#:import NavigationLayout kivymd.navigationdrawer.NavigationLayout
+#:import NavigationDrawerDivider kivymd.navigationdrawer.NavigationDrawerDivider
+#:import NavigationDrawerToolbar kivymd.navigationdrawer.NavigationDrawerToolbar
+#:import NavigationDrawerSubheader kivymd.navigationdrawer.NavigationDrawerSubheader
+#:import MDCheckbox kivymd.selectioncontrols.MDCheckbox
+#:import MDSwitch kivymd.selectioncontrols.MDSwitch
+#:import MDList kivymd.list.MDList
+#:import OneLineListItem kivymd.list.OneLineListItem
+#:import TwoLineListItem kivymd.list.TwoLineListItem
+#:import ThreeLineListItem kivymd.list.ThreeLineListItem
+#:import OneLineAvatarListItem kivymd.list.OneLineAvatarListItem
+#:import OneLineIconListItem kivymd.list.OneLineIconListItem
+#:import OneLineAvatarIconListItem kivymd.list.OneLineAvatarIconListItem
+#:import MDTextField kivymd.textfields.MDTextField
+#:import MDSpinner kivymd.spinner.MDSpinner
+#:import MDCard kivymd.card.MDCard
+#:import MDSeparator kivymd.card.MDSeparator
+#:import MDDropdownMenu kivymd.menu.MDDropdownMenu
+#:import get_color_from_hex kivy.utils.get_color_from_hex
+#:import colors kivymd.color_definitions.colors
+#:import SmartTile kivymd.grid.SmartTile
+#:import MDSlider kivymd.slider.MDSlider
+#:import MDTabbedPanel kivymd.tabs.MDTabbedPanel
+#:import MDTab kivymd.tabs.MDTab
+#:import MDProgressBar kivymd.progressbar.MDProgressBar
+#:import MDAccordion kivymd.accordion.MDAccordion
+#:import MDAccordionItem kivymd.accordion.MDAccordionItem
+#:import MDAccordionSubItem kivymd.accordion.MDAccordionSubItem
+#:import MDThemePicker kivymd.theme_picker.MDThemePicker
+#:import MDBottomNavigation kivymd.tabs.MDBottomNavigation
+#:import MDBottomNavigationItem kivymd.tabs.MDBottomNavigationItem
+
+NavigationLayout:
+    id: nav_layout
+
+    MDNavigationDrawer:
+        id: nav_drawer
+        NavigationDrawerToolbar:
+            title: "File Searcher"
+        NavigationDrawerIconButton:
+            icon: 'home'
+            text: 'Home'
+            on_release: app.root.ids._scr_mngr.current = 'home'
+        NavigationDrawerIconButton:
+            icon: 'settings'
+            text: 'Settings'
+            on_release: app.root.ids._scr_mngr.current = 'settings'
+        NavigationDrawerIconButton:
+            icon: 'information'
+            text: "About"
+            on_release: app.show_about_dialog()
+        # TODO: add 'more-apps' item, this will open playstore to view our apps
+
+    # [start: scrn_mngr]
+    ScreenManager:
+        id: _scr_mngr
+
+        # [start: home screen]
+        Screen:
+            name: 'home'
+            id: this
+            BoxLayout:
+
+                Toolbar:
+                    width: dp(0)
+                    size_hint_x: (0.09)
+                    pos_hint: {'top': 1}
+                    md_bg_color: app.theme_cls.primary_color
+                    background_palette: 'Primary'
+                    left_action_items: [['menu', lambda x: app.root.toggle_nav_drawer()]]
+
+            MDTextField:
+                id: _search_text_field
+                width: 0
+                size_hint_x: (.7)
+                focus: True
+                color_mode: 'accent'
+                pos_hint: {'center_x': .6, 'top': 1}
+                hint_text: 'Search here'
+                opposite_colors: True
+                on_text_validate: app.search_files()
+
+
+            BoxLayout:
+                orientation: 'horizontal'
+                height: 0
+                pos_hint: {'center_y': 0.87}
+
+                ScrollView:
+                    do_scroll_x: False
+                    pos_hint: {'center_y': 0}
+                    MDList:
+                        id: _search_results_list
+                        TwoLineListItem:
+                            text: "Search for your files by name in the search box"
+
+        # [end: home screen]
+
+        # [start: settings screen]
+        Screen:
+            name: 'settings'
+            on_enter: app.screens_list.append('settings')
+            on_leave: app.save_user_settings()
+
+            Toolbar:
+                hidden: True
+                title: 'Settings'
+                icon: 'theme-light-dark'
+                pos_hint: {'top': 1}
+                md_bg_color: app.theme_cls.primary_color
+                background_palette: 'Primary'
+                background_hue: '500'
+                left_action_items: [['menu', lambda x: app.root.toggle_nav_drawer()]]
+
+            BoxLayout:
+                height: 0
+                pos_hint: {'center_y': 0.87}
+
+                ScrollView:
+                    do_scroll_x: False
+                    pos_hint: {'center_y': 0}
+                    MDList:
+                        id: _settings_mdlist
+                        TwoLineListItem:
+                            id: _settings_current_theme
+                            text: "Change Theme"
+                            secondary_text: "Current: " + app.theme_cls.theme_style + ", " + app.theme_cls.primary_palette
+                            on_release: MDThemePicker().open()
+
+                        TwoLineListItem:
+                            text: "Files"
+                            secondary_text: "Select the type of files to include in search"
+                            disabled: True
+                        TwoLineAvatarIconListItem:
+                            id: _settings_document_file_type
+                            text: "Documents"
+                            secondary_text: ".pdf, .doc, .xlsx, .pptx"
+                            on_release: app.show_files_extensions("document_extensions")
+                        TwoLineAvatarIconListItem:
+                            id: _settings_image_file_type
+                            text: "Images"
+                            secondary_text: ".bmp, .gif, .jpg, .png, .webp"
+                            on_release: app.show_files_extensions("image_extensions")
+                        TwoLineAvatarIconListItem:
+                            id: _settings_video_file_type
+                            text: "Videos"
+                            secondary_text: ".mkv, .mp4, .ts, .webm"
+                            on_release: app.show_files_extensions("video_extensions")
+                        TwoLineAvatarIconListItem:
+                            id: _settings_image_file_type
+                            text: "Audio"
+                            secondary_text: ".acc, .flac, .ogg, .m4a, .mp3, .xmf, .wav"
+                            on_release: app.show_files_extensions("audio_extensions")
+        # [end: settings screen]
+
+    # [end: scrn_mngr]

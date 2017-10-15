@@ -1,0 +1,37 @@
+{
+    "audio_extensions": {
+        ".acc": true,
+        ".flac": false,
+        ".wav": false,
+        ".mp3": false,
+        ".m4a": false,
+        ".3gp": true,
+        ".xmf": false,
+        ".ogg": false,
+        ".opus": false
+    },
+    "document_extensions": {
+        ".doc": true,
+        ".ppt": false,
+        ".pptx": false,
+        ".xlsx": false,
+        ".cvs": true,
+        ".pdf": true,
+        ".txt": true,
+        ".xls": true,
+        ".docx": false
+    },
+    "image_extensions": {
+        ".webp": true,
+        ".bmp": false,
+        ".gif": true,
+        ".jpg": false,
+        ".png": false
+    },
+    "video_extensions": {
+        ".mkv": false,
+        ".webm": false,
+        ".mp4": false,
+        ".ts": false
+    }
+}
